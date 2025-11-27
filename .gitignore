@@ -1,3 +1,6 @@
+# ----------------------------------
+# Go (Golang) Standard Rules
+# ----------------------------------
 # If you prefer the allow list template instead of the deny list, see community template:
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
@@ -17,16 +20,37 @@ coverage.*
 *.coverprofile
 profile.cov
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Dependency directories
+vendor/
 
 # Go workspace file
 go.work
 go.work.sum
 
-# env file
-.env
+# ----------------------------------
+# Node.js / フロントエンド (追記)
+# ----------------------------------
+/node_modules
+/dist
+/out
+npm-debug.log*
+yarn-error.log
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# ----------------------------------
+# 機密情報 / ローカル設定ファイル (最重要)
+# ----------------------------------
+# 環境変数を格納するファイルは、必ずGitから除外します
+.env
+.env.*
+config/local.yaml
+*.log
+
+# ----------------------------------
+# Editor/IDE 設定
+# ----------------------------------
+# チームメンバー間の環境差分を避けるため、IDE設定は除外推奨
+.idea/      # IntelliJ / GoLand
+.vscode/    # VS Code
+
+# macOS 固有ファイル
+.DS_Store
