@@ -1,1 +1,55 @@
+version: '3.8'
 
+services:
+  # -----------------------------------
+  # 1. Goアプリケーション (BBSコア)
+  # -----------------------------------
+  app:
+    build:
+      context: ./go 
+      dockerfile: Dockerfile
+    # .envファイルから環境変数を読み込む
+    env_file:
+      - .env
+    ports:
+      - "${GO_PORT}:${GO_PORT}" # ホスト側ポート:コンテナ側ポート
+    volumes:
+      - ./go:/app # ホットリロードのためにソースコードをマウント
+    # ホットリロードツール Air を使用してアプリを起動
+    command: /go/bin/air -c .air.toml # ★修正箇所: 実行パスを /go/bin/air に変更★
+    depends_on:
+      - db
+      - redis
+
+  # -----------------------------------
+  # 2. PostgreSQL データベース
+  # -----------------------------------
+  db:
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # データ永続化
+    restart: always
+
+  # -----------------------------------
+  # 3. Redis キャッシュ/セッション
+  # -----------------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    volumes:
+      - redis_data:/data # データ永続化
+    restart: always
+
+# 永続化のためのボリューム定義
+volumes:
+  postgres_data:
+  redis_data:
